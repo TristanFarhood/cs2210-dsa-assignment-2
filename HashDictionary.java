@@ -7,60 +7,91 @@ public class HashDictionary implements DictionaryADT { // implements Dictionary 
     private LinkedList<Layout>[] table; // table, array of linked lists that takes parameter Layout 
        
 
+    @SuppressWarnings("unchecked")
     public HashDictionary(int size){ // class constructor 
 
-        dictionarySize = size; // dictionary size must be under 10,000 
+        this.dictionarySize = size; // dictionary size must be under 10,000
+        this.table = new LinkedList[this.dictionarySize]; 
 
     }
 
 
-    /* To determine how good your design is, we will count the number of collisions produced by your
-    hash function. Method put must return the value 1 if the insertion of the object referenced
-    by data into the hash table produces a collision, and it must return the value 0 otherwise.
-    In other words, if for example your hash function is h(key) and the name of your table is T,
-    this method will return the value 1 if the list stored in T[h(data.getBoardLayout())] already
-    stores at least one element; it will return 0 if T[h(data.getBoardLayout())] is null or an empty
-    list. */
+    // method to return a value from the String key
+    private int hash(String key){  
 
+        int hashesValue = 0; // the final hashvalue
 
-    // 1 means collision in the hash 
-    // 0 menas no collision in the hash 
+        for(int i = 0; i < key.length(); i++){
+            hashesValue = (hashesValue * 31 + key.charAt(i)) % 10000; // updating hashesValue with each increment of key's characters, base 31
+        }
 
-
-    /* We pass a layout l1 : RBBREE, score as 2 key is RBBREE value is 2
-     * Our hash method takes the key RBREE returns 5 to be indexed in the array
-     * T[5] now holds value RBBREE and score 2
-     * 
-     * Now layout l2 : RBBERE, score as 1 key is RBBERE value is 1
-     * Our hash method takes the key RBBERE returns 5 to be indexed in the array
-     * T[5] with implemented linked list expands by 1 
-     */
-
-    // has method hash "h" - consistent in the assignment pdf
-    private int hash(String key){ // key is data.getboardlayout()
-        return 0;  
-
+        return hashesValue; 
     }
 
 
+    // method to put the data into the hash table based on the hash value
     public int put(Layout data) throws DictionaryException { 
 
-        // data.getBoardLayout();
+        if(data == null || data.getBoardLayout() == null){
+            throw new DictionaryException("Data not valid");
 
+        }
 
+        int collisionReturnValue = 1; // variable to check for collision always assumes there is collision
 
-        return 0; // temp return   
+        int index = hash(data.getBoardLayout()); 
+        if (table[index] == null){
+            table[index] = new LinkedList<>(); // creating a new linked list inside the index of the table
+            collisionReturnValue = 0; // changes the collision after proving there is non above within if statement 
+        } 
+        
+        table[index].add(data);  
+
+        return collisionReturnValue; // temp return   
 
     }
 
-    
+
+    //Removes the object with key boardLayout from the dictionary; 
     public void remove(String boardLayout) throws DictionaryException {
 
+        int index = hash(boardLayout); 
+        if (table[index] == null){
+            throw new DictionaryException("Key does not exist"); 
+        } 
+
+        LinkedList<Layout> toBeRemovedLinkedList = table[index]; 
+
+        for(int i = 0; i < toBeRemovedLinkedList.size(); i++){
+            if(toBeRemovedLinkedList.get(i).getBoardLayout().equalsIgnoreCase(boardLayout)){
+                toBeRemovedLinkedList.remove(i); // removes unwanted key from index of the linked list
+                return;
+            }
+
+        }
+        throw new DictionaryException("key does not exist : " + boardLayout); // exception in case the key is not there
+
     }
 
 
+    // method which returns the score stored inside object in the dictionary, if there is no object with that key -1 is returned
     public int get(String boardLayout){
-        return 0; // temp return
+
+        int index = hash(boardLayout); 
+        if (table[index] == null){
+            return -1; // no object in the dictionary with that key
+        } 
+
+        LinkedList<Layout> foundLinkedList = table[index]; 
+
+        for(int i = 0; i < foundLinkedList.size(); i++){
+            if(foundLinkedList.get(i).getBoardLayout().equalsIgnoreCase(boardLayout)){
+                return foundLinkedList.get(i).getScore();
+            }
+
+        }
+        return -1; // no object in the dictionary with that key
+
     }
 
 
