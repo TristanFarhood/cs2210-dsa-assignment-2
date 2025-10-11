@@ -95,4 +95,19 @@ public class HashDictionary implements DictionaryADT { // implements Dictionary 
     }
 
 
+    public LinkedList<Layout>[] getTable() {
+        return table;
+    }
+
+
+    public void setTable(LinkedList<Layout>[] table) {
+        this.table = table;
+    }
+
+
+
+    
+    
+
+
 }

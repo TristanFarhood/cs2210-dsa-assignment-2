@@ -1,8 +1,8 @@
 public class Layout {
     
     // instance variables for constructor
-    private String boardLayout;
-    private int score;
+    private String boardLayout; // key 
+    private int score; // value
 
     public Layout(String boardLayout, int score){ // class constructor 
 

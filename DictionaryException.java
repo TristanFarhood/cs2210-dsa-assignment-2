@@ -5,6 +5,7 @@ public class DictionaryException extends Exception{
         super(message); 
     }
 
+
     public DictionaryException() {
         super("For now this is a messsage in dictionary exception");
     }
