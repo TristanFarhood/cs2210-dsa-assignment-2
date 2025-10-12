@@ -22,7 +22,7 @@ public class HashDictionary implements DictionaryADT { // implements Dictionary 
         int hashesValue = 0; // the final hashvalue
 
         for(int i = 0; i < key.length(); i++){
-            hashesValue = (hashesValue * 31 + key.charAt(i)) % 10000; // updating hashesValue with each increment of key's characters, base 31
+            hashesValue = (hashesValue * 31 + key.charAt(i)) % this.dictionarySize; // updating hashesValue with each increment of key's characters, base 31
         }
 
         return hashesValue; 

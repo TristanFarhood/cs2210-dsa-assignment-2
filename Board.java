@@ -43,7 +43,7 @@ public class Board implements BoardADT {
     public int repeatedLayout(HashDictionary dict){
  
 
-        String contentOf2dArray = this.contentOf2dArray(); 
+        String contentOf2dArray = this.contentOf2dArray(); // contentOf2DArray instead of "s" as specified in instructions
 
         LinkedList<Layout>[] table = dict.getTable();
 
@@ -63,36 +63,182 @@ public class Board implements BoardADT {
 
 
     public void storeLayout(HashDictionary dict, int score){
+
+        String contentOf2dArray = this.contentOf2dArray(); // contentOf2DArray instead of "s" as specified in instructions
+        Layout LayoutObject = new Layout(contentOf2dArray, score); 
+        
+        try { // exception handling for putting "s" and score in dict and it handles the exception itself 
+            dict.put(LayoutObject); 
+        } catch(DictionaryException e){
+            System.out.println("Its not in Layout"); 
+        }
         
     }
 
-    public void saveTile(int row, int col, char symbol){
+   
+
+    public void saveTile(int row, int col, char symbol){ // method stores stores symbol in theBoard[row][col]
+        theBoard[row][col] = symbol; 
 
     }
 
     public boolean positionIsEmpty (int row, int col){
-        return true; 
+
+        if(theBoard[row][col] == 'E'){
+            return true;
+
+        }
+
+        return false; // otherwise if the position does not return 'E'
     }
 
 
     public boolean isComputerTile (int row, int col){
-        return true;
+        if(theBoard[row][col] == 'R'){
+            return true;
+
+        }
+
+        return false; // otherwise if the position does not return 'R'
     }
 
     public boolean isHumanTile (int row, int col){
-        return true;
+        if(theBoard[row][col] == 'B'){
+            return true;
+
+        }
+
+        return false; // otherwise if the position does not return 'B'
     }
+
+
+
+    private String diagonal() { // helper diagonal method 
+        if (this.theBoard == null || this.theBoard.length == 0) {
+            return "";
+        }
+        StringBuilder diagonalString = new StringBuilder();
+        for (int i = 0; i < this.theBoard.length; i++) {
+            diagonalString.append(this.theBoard[i][i]);
+        }
+        return diagonalString.toString();
+    }
+
+
+
+    /* Returns true if there are n adjacent tiles of type symbol in the same row, column, 
+    or diagonal of theBoard, where n is the size of the game board. */
 
     public boolean winner (char symbol){
-        return true;
+
+        boolean won = false; 
+        // itterating though the columns
+        for (int col = 0; col < theBoard[0].length; col++) { // outer loop iterate through columns
+            String eachColumns = "";
+            for (int row = 0; row < theBoard.length; row++) { // inner loop iterate through rows
+                eachColumns = eachColumns + String.valueOf(theBoard[row][col]);
+            }
+            
+            boolean eachColumnBoolean = false;
+            char firstChar = eachColumns.charAt(0);
+
+            if(firstChar == symbol){
+                eachColumnBoolean = true;
+                for (int i = 1; i < eachColumns.length(); i++) {
+                    if (eachColumns.charAt(i) != firstChar) {
+                       eachColumnBoolean = false; // found different character
+                    }
+                }
+            }
+            
+            if (eachColumnBoolean == true){
+                return true; 
+            }    
+    
+        }
+
+        // itterating through the rows
+        for (int row = 0; row < theBoard.length; row++) { // outer loop for rows
+            String eachRows = ""; 
+            for (int col = 0; col < theBoard[row].length; col++) { // inner loop for columns
+                eachRows = eachRows + String.valueOf(theBoard[row][col]);
+            }
+            
+            boolean eachRowBoolean = false;
+            char firstChar = eachRows.charAt(0);
+
+            if(firstChar == symbol){
+                eachRowBoolean = true;
+                for (int i = 1; i < eachRows.length(); i++) {
+                    if (eachRows.charAt(i) != firstChar) {
+                       eachRowBoolean = false; // found different character
+                    }
+                }
+            }
+            
+            if (eachRowBoolean == true){
+                return true; 
+            }  
+        }
+
+        String diagonal = this.diagonal(); 
+
+        boolean eachDiagonalBoolean = false;
+        char firstChar = diagonal.charAt(0);
+        if(firstChar == symbol){
+                eachDiagonalBoolean = true;
+                for (int i = 1; i < diagonal.length(); i++) {
+                    if (diagonal.charAt(i) != firstChar) {
+                       eachDiagonalBoolean = false; // found different character
+                    }
+                }
+            }
+
+        
+        return won;
+
     }
+
+
+        /* Returns true if the game
+    layout corresponding to theBoard is a draw assuming that the player that must perform the
+    next move uses tiles of the type specified by symbol. The second parameter is the number of
+    positions of the game-board that must remain empty.
+    Remember that a game is a draw if no player has won and either:
+    
+    – empty positions = 0 and there are no empty positions left on the game board, or
+    – empty positions > 0, the number of empty positions on the game-board is equal to
+    empty positions and none of the empty positions on the game-board has a tile of the
+    type specified by symbol adjacent to it. */
+
+
 
     public boolean isDraw(char symbol, int empty_positions){
-        return true; 
+
+        if(winner('R') || winner('B')){ // if Red or Blue is the winner its not a draw 
+            return false;
+        }
+
+        if(empty_positions == 0 && contentOf2dArray().indexOf("E") != -1){
+            return true; 
+        }
+
+        return false; 
     }
 
+
     public int evaluate(char symbol, int empty_positions){
-        return 0; 
+
+        if(winner('R')){
+            return 3;
+        }
+        if(winner('B')){
+            return 0;
+        }
+
+        // TODO 2 if draw 
+
+        return 1; // undecided assumption
     }
 
 
