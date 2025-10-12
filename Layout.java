@@ -11,6 +11,8 @@ public class Layout {
 
     }
 
+    // gettters and setters below for member variables
+
     public String getBoardLayout() {
         return boardLayout;
     }

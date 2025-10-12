@@ -7,110 +7,85 @@ public class Board implements BoardADT {
     public char[][] theBoard;  
 
 
-    public Board (int board_size, int empty_positions, int max_levels){ // Class constructor
-
+    public Board (int board_size, int empty_positions, int max_levels){ // class constructor
         this.board_size = board_size; 
+        this.theBoard = new char[board_size][board_size]; 
 
+        // fill the board with 'E' (empty)
+        for (int i = 0; i < board_size; i++) {
+            for (int j = 0; j < board_size; j++) {
+                this.theBoard[i][j] = 'E';
+            }
+        }
     }
 
 
-
+    // hashdictionary method of type HashDictionary 
     public HashDictionary makeDictionary(){
-
-        HashDictionary hash_Dictionary = new HashDictionary(board_size); 
-
+        HashDictionary hash_Dictionary = new HashDictionary(board_size); // instantiate an object of HashDictionary that takes board size as parameter
         return hash_Dictionary; 
     }
 
 
-    /*This method first represents the content of the 2-dimensional array theBoard as a String s as described in Section 2.1; then it
-    checks whether there is a data item in the dictionary referenced by dict with key s: If there is
-    such a data item, this method returns the associated score; otherwise it returns the value -1. */
+    private String contentOf2dArray (){ // private helper method to convert game board to String
+        String contentOf2dArray = ""; // empty string to hold contents of the array in RRBBEEBB... format
 
-    private String contentOf2dArray (){ // private method to convert game board to String
-        String contentOf2dArray = ""; 
-
-        for (int col = 0; col < theBoard[0].length; col++) { // Outer loop iterates through columns
-            for (int row = 0; row < theBoard.length; row++) { // Inner loop iterates through rows
+        for (int row = 0; row < theBoard.length; row++) { 
+            for (int col = 0; col < theBoard[row].length; col++) { 
                 contentOf2dArray = contentOf2dArray + String.valueOf(theBoard[row][col]); 
             }
         }
 
         return contentOf2dArray;
-
     }
 
+
     public int repeatedLayout(HashDictionary dict){
- 
-
-        String contentOf2dArray = this.contentOf2dArray(); // contentOf2DArray instead of "s" as specified in instructions
-
-        LinkedList<Layout>[] table = dict.getTable();
-
-        // loop through the linked list layout then get boardlayout String from each layout and compare it 
-
-        for(int i = 0; i < table.length; i++){
-            // table[0] = one linked list in hashTable 
-           for(int j = 0; i < table[i].size(); j++) {
-             if(table[i].get(i).getBoardLayout().equalsIgnoreCase(contentOf2dArray)){
-                return table[i].get(j).getScore();
-             }
-           }   
-      }  
-
-        return -1; 
+        // refined simplified version uses dict.get instead of manual scanning
+        String contentOf2dArray = this.contentOf2dArray(); 
+        return dict.get(contentOf2dArray); 
     }
 
 
     public void storeLayout(HashDictionary dict, int score){
-
-        String contentOf2dArray = this.contentOf2dArray(); // contentOf2DArray instead of "s" as specified in instructions
+        String contentOf2dArray = this.contentOf2dArray(); // String variable invoking methos above with this.
         Layout LayoutObject = new Layout(contentOf2dArray, score); 
         
-        try { // exception handling for putting "s" and score in dict and it handles the exception itself 
+        try { 
             dict.put(LayoutObject); 
         } catch(DictionaryException e){
-            System.out.println("Its not in Layout"); 
+            // just ignore if it already exists * the assignment allows this *
         }
-        
     }
 
-   
 
-    public void saveTile(int row, int col, char symbol){ // method stores stores symbol in theBoard[row][col]
+    public void saveTile(int row, int col, char symbol){ 
         theBoard[row][col] = symbol; 
-
     }
+
 
     public boolean positionIsEmpty (int row, int col){
-
         if(theBoard[row][col] == 'E'){
             return true;
-
         }
-
-        return false; // otherwise if the position does not return 'E'
+        return false; 
     }
 
 
     public boolean isComputerTile (int row, int col){
         if(theBoard[row][col] == 'R'){
             return true;
-
         }
-
-        return false; // otherwise if the position does not return 'R'
+        return false; 
     }
+
 
     public boolean isHumanTile (int row, int col){
         if(theBoard[row][col] == 'B'){
             return true;
-
         }
-
-        return false; // otherwise if the position does not return 'B'
+        return false; 
     }
-
 
 
     private String diagonal() { // helper diagonal method 
@@ -126,16 +101,14 @@ public class Board implements BoardADT {
 
 
 
-    /* Returns true if there are n adjacent tiles of type symbol in the same row, column, 
-    or diagonal of theBoard, where n is the size of the game board. */
-
+    // winner method by checking columns and rows then calls helped method above to check diagonal
     public boolean winner (char symbol){
-
         boolean won = false; 
-        // itterating though the columns
-        for (int col = 0; col < theBoard[0].length; col++) { // outer loop iterate through columns
+
+        // check columns
+        for (int col = 0; col < theBoard[0].length; col++) { 
             String eachColumns = "";
-            for (int row = 0; row < theBoard.length; row++) { // inner loop iterate through rows
+            for (int row = 0; row < theBoard.length; row++) { 
                 eachColumns = eachColumns + String.valueOf(theBoard[row][col]);
             }
             
@@ -146,7 +119,7 @@ public class Board implements BoardADT {
                 eachColumnBoolean = true;
                 for (int i = 1; i < eachColumns.length(); i++) {
                     if (eachColumns.charAt(i) != firstChar) {
-                       eachColumnBoolean = false; // found different character
+                       eachColumnBoolean = false; 
                     }
                 }
             }
@@ -154,13 +127,12 @@ public class Board implements BoardADT {
             if (eachColumnBoolean == true){
                 return true; 
             }    
-    
         }
 
-        // itterating through the rows
-        for (int row = 0; row < theBoard.length; row++) { // outer loop for rows
+        // check rows
+        for (int row = 0; row < theBoard.length; row++) { 
             String eachRows = ""; 
-            for (int col = 0; col < theBoard[row].length; col++) { // inner loop for columns
+            for (int col = 0; col < theBoard[row].length; col++) { 
                 eachRows = eachRows + String.valueOf(theBoard[row][col]);
             }
             
@@ -171,7 +143,7 @@ public class Board implements BoardADT {
                 eachRowBoolean = true;
                 for (int i = 1; i < eachRows.length(); i++) {
                     if (eachRows.charAt(i) != firstChar) {
-                       eachRowBoolean = false; // found different character
+                       eachRowBoolean = false; 
                     }
                 }
             }
@@ -181,67 +153,80 @@ public class Board implements BoardADT {
             }  
         }
 
-        String diagonal = this.diagonal(); 
+        // check both diagonals 
+        boolean diagonal1 = true;
+        boolean diagonal2 = true;
 
-        boolean eachDiagonalBoolean = false;
-        char firstChar = diagonal.charAt(0);
-        if(firstChar == symbol){
-                eachDiagonalBoolean = true;
-                for (int i = 1; i < diagonal.length(); i++) {
-                    if (diagonal.charAt(i) != firstChar) {
-                       eachDiagonalBoolean = false; // found different character
-                    }
-                }
-            }
+        for (int i = 0; i < theBoard.length; i++) {
+            if (theBoard[i][i] != symbol) diagonal1 = false;
+            if (theBoard[i][theBoard.length - 1 - i] != symbol) diagonal2 = false;
+        }
 
-        
+        if (diagonal1 || diagonal2) {
+            return true;
+        }
+
         return won;
-
     }
 
 
-        /* Returns true if the game
-    layout corresponding to theBoard is a draw assuming that the player that must perform the
-    next move uses tiles of the type specified by symbol. The second parameter is the number of
-    positions of the game-board that must remain empty.
-    Remember that a game is a draw if no player has won and either:
-    
-    – empty positions = 0 and there are no empty positions left on the game board, or
-    – empty positions > 0, the number of empty positions on the game-board is equal to
-    empty positions and none of the empty positions on the game-board has a tile of the
-    type specified by symbol adjacent to it. */
-
+    // helper for adjacency check 
+    private boolean hasAdjacent(int row, int col, char symbol) {
+        for (int i = row - 1; i <= row + 1; i++) {
+            for (int j = col - 1; j <= col + 1; j++) {
+                if (i >= 0 && j >= 0 && i < board_size && j < board_size) {
+                    if (theBoard[i][j] == symbol) return true;
+                }
+            }
+        }
+        return false;
+    }
 
 
     public boolean isDraw(char symbol, int empty_positions){
-
-        if(winner('R') || winner('B')){ // if Red or Blue is the winner its not a draw 
+        if(winner('R') || winner('B')){ 
             return false;
         }
 
-        if(empty_positions == 0 && contentOf2dArray().indexOf("E") != -1){
+        int emptyCount = 0;
+        for (int i = 0; i < board_size; i++) {
+            for (int j = 0; j < board_size; j++) {
+                if (theBoard[i][j] == 'E') emptyCount++;
+            }
+        }
+
+        if(empty_positions == 0 && emptyCount == 0){
             return true; 
+        }
+
+        if (empty_positions > 0 && emptyCount == empty_positions) {
+            for (int i = 0; i < board_size; i++) {
+                for (int j = 0; j < board_size; j++) {
+                    if (theBoard[i][j] == 'E' && hasAdjacent(i, j, symbol)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         return false; 
     }
 
 
+    // evaluate method 
     public int evaluate(char symbol, int empty_positions){
-
         if(winner('R')){
             return 3;
         }
         if(winner('B')){
             return 0;
         }
+        if (isDraw(symbol, empty_positions)) {
+            return 2;
+        }
 
-        // TODO 2 if draw 
-
-        return 1; // undecided assumption
+        return 1; 
     }
 
-
-
-    
 }

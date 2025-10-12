@@ -16,7 +16,7 @@ public class HashDictionary implements DictionaryADT { // implements Dictionary 
     }
 
 
-    // method to return a value from the String key
+    // helper method to return a value from the String key
     private int hash(String key){  
 
         int hashesValue = 0; // the final hashvalue
@@ -30,29 +30,36 @@ public class HashDictionary implements DictionaryADT { // implements Dictionary 
 
 
     // method to put the data into the hash table based on the hash value
-    public int put(Layout data) throws DictionaryException { 
+    public int put(Layout data) throws DictionaryException {
 
-        if(data == null || data.getBoardLayout() == null){
+        if (data == null || data.getBoardLayout() == null) {
             throw new DictionaryException("Data not valid");
-
         }
 
-        int collisionReturnValue = 1; // variable to check for collision always assumes there is collision
+        int index = hash(data.getBoardLayout());
+        int collisionReturnValue = 1; 
 
-        int index = hash(data.getBoardLayout()); 
-        if (table[index] == null){
-            table[index] = new LinkedList<>(); // creating a new linked list inside the index of the table
-            collisionReturnValue = 0; // changes the collision after proving there is non above within if statement 
-        } 
+        if (table[index] == null) {
+            table[index] = new LinkedList<>();
+            collisionReturnValue = 0;
+        }
+
         
+        for (int i = 0; i < table[index].size(); i++) {
+            Layout existing = table[index].get(i);
+            if (existing.getBoardLayout().equals(data.getBoardLayout())) {
+                throw new DictionaryException("Duplicate key: " + data.getBoardLayout());
+            }
+        }
+
         table[index].add(data);  
-
-        return collisionReturnValue; // temp return   
-
-    }
+        return collisionReturnValue;
+}
 
 
-    //Removes the object with key boardLayout from the dictionary; 
+
+
+    // removes the object with key boardLayout from the dictionary
     public void remove(String boardLayout) throws DictionaryException {
 
         int index = hash(boardLayout); 
@@ -94,6 +101,7 @@ public class HashDictionary implements DictionaryADT { // implements Dictionary 
 
     }
 
+    // getters and setters for table member variable
 
     public LinkedList<Layout>[] getTable() {
         return table;
